@@ -60,11 +60,11 @@ class MAX31855(object):
     if (value & (1<<16)):
       # Fault detected, check error bits:
       if (value & (1<<2)):
-        self.error = "SVCC"
+        self.error = 0.002
       elif (value & (1<<1)):
-        self.error = "SGND"
+        self.error = 0.003
       else:
-        self.error = "OPEN"
+        self.error = 0.001
       return None
 
     return value
