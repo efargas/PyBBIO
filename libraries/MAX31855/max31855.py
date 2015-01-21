@@ -31,7 +31,7 @@ class MAX31855(object):
     """ Reads and returns the temperature in Celsius, or returns None
         if error detected. """
     value = self.read()
-    if not value: return None
+    if not value: return self.error
     # Extract 14-bit signed temperature value:
     temp = (value >> 18) & 0x3fff
     sign = temp & (1<<14)
@@ -60,11 +60,11 @@ class MAX31855(object):
     if (value & (1<<16)):
       # Fault detected, check error bits:
       if (value & (1<<2)):
-        self.error = "*Thermocouple shorted to Vcc*"
+        self.error = "SVCC"
       elif (value & (1<<1)):
-        self.error = "*Thermocouple shorted to GND*"
+        self.error = "SGND"
       else:
-        self.error = "*Thermocouple not connected*"
+        self.error = "OPEN"
       return None
 
     return value
