@@ -31,13 +31,19 @@ class MAX31855(object):
     """ Reads and returns the temperature in Celsius, or returns None
         if error detected. """
     value = self.read()
-    if not value: 
-     return 0,self.error
+    if not value:
+     state = []
+     state.append(0)
+     state.append(self.error)
+     return state
     # Extract 14-bit signed temperature value:
     temp = (value >> 18) & 0x3fff
     sign = temp & (1<<14)
     if sign: temp = -(~temp+1 & 0x1fff)
-    return temp*0.25 + self.offset
+    temps_error = []
+    temps_error.append(temp*0.25 + self.offset)
+    temps_error.append(self.error)
+    return temps_error
     
   def readTempInternal(self):
     """ Reads and returns the MAX31855 reference junction temperature 
@@ -58,6 +64,8 @@ class MAX31855(object):
     value = shiftIn(self._data, self._clk, MSBFIRST, n_bits=32)
     digitalWrite(self._cs, HIGH)
 
+    if not value:
+     self.error = 0.004 #Unknown error, probably bad pin configuration or missing MAX
     if (value & (1<<16)):
       # Fault detected, check error bits:
       if (value & (1<<2)):
