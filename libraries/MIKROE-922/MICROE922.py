@@ -37,6 +37,7 @@ class MIKROE922:
                         cmd += 32
  
                 # send & receive data
+                #reply_bytes = self.conn.xfer2([cmd, 0, 0, 0])
                 reply_bytes = self.conn.transfer(0,[cmd, 0, 0, 0])
  
                 #
